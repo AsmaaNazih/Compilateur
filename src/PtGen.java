@@ -131,6 +131,8 @@ public class PtGen {
     // it = indice de remplissage de tabSymb
     // bc = bloc courant (=1 si le bloc courant est le programme principal)
 	private static int it, bc;
+	private static int ad;
+	private static int indAff;
 	
 	/** 
 	 * utilitaire de recherche de l'ident courant (ayant pour code UtilLex.numIdCourant) dans tabSymb
@@ -196,6 +198,8 @@ public class PtGen {
 		// indices de gestion de la table des symboles
 		it = 0;
 		bc = 1;
+		ad=0;
+		indAff = -1;
 		
 		// pile des reprises pour compilation des branchements en avant
 		pileRep = new TPileRep(); 
@@ -224,12 +228,16 @@ public class PtGen {
 			initialisations();
 			break;
 			//valeur
-		case 1: /*verif à faire ici */po.produire(CONTENUG);break;
+		case 1: int ind = presentIdent(1); if(ind != 0) { switch(tabSymb[ind].categorie) {
+															case CONSTANTE: po.produire(EMPILER);po.produire(tabSymb[ind].info);break;
+															case VARGLOBALE:po.produire(CONTENUG);po.produire(tabSymb[ind].info);break;
+														}}
+				tCour = tabSymb[ind].type;break;
 		case 2: verifEnt();break;
 		case 3: tCour = ENT; vCour = UtilLex.valEnt * -1; break;
 		case 4: po.produire(EMPILER);po.produire(vCour); break;
 		case 5: tCour = BOOL; po.produire(EG); break;
-		case 6: verifBool(); break;
+		case 6: afftabSymb(); ;verifBool(); break;
 		case 7: tCour = ENT; vCour = UtilLex.valEnt; break;
 		case 8: tCour = ENT; po.produire(ADD); break;
 		case 9: tCour = BOOL; po.produire(ET); break;
@@ -247,24 +255,30 @@ public class PtGen {
 		case 21: if(presentIdent(1)==0) {UtilLex.messErr("variable " + UtilLex.chaineIdent(UtilLex.numIdCourant)+" non déclaré" );UtilLex.arret();} break;
 		case 22: tCour = BOOL; vCour = VRAI; break;
 		case 23: tCour = BOOL; vCour = FAUX; break;
-		case 24: int ind = presentIdent(1); if(ind != 0) {switch(tabSymb[ind].type) {
-															case ENT: verifEnt(); break;
-															case BOOL: verifBool();break;
-															case NEUTRE: break;}
-		}
-		case  25: po.produire(AFFECTERG);break;
+		case 24: int in = presentIdent(1);if(in != 0) {switch(tabSymb[in].categorie) {
+															case CONSTANTE: UtilLex.messErr("Constante "+ UtilLex.chaineIdent(tabSymb[in].code )+" ne peut être modifié"); UtilLex.arret(); break;
+															case VARGLOBALE: indAff = in; break;
+															}break;
+														}else {UtilLex.messErr("Variable n'existe pas"); UtilLex.arret();}break;
+		case  25: po.produire(AFFECTERG); po.produire(tabSymb[indAff].info);break;
+		case 26:tCour = BOOL;break;
+		case 27: tCour = ENT;break;
+		case 28: break;
+		case 29: if(presentIdent(1)!=0) {UtilLex.messErr("nom de variable déjà utilisé : " + UtilLex.numIdCourant); UtilLex.arret();} break;
 		
-		case 29: placeIdent(UtilLex.numIdCourant, CONSTANTE, )
 			// Var Ident
-		case 30: placeIdent(UtilLex.numIdCourant, VARGLOBALE, ENT, 0);  break; //compter ici le nombre de 
+		case 30: placeIdent(UtilLex.numIdCourant, VARGLOBALE, tCour, ad); ad++;  break;
+		case 31: placeIdent(UtilLex.numIdCourant, CONSTANTE, tCour, vCour); break;
+		case 32: po.produire(RESERVER); po.produire(ad);
 			//non fait
+			break;
 		case 100: break;
 		
 		
 		
 		// TODO
 		case 254: po.produire(ARRET); break;
-		case 255 :
+		case 255 : //TestsProjet\DeclExp-T1
 			po.constObj();
 			afftabSymb(); // affichage de la table des symboles en fin de compilation
 			break;
