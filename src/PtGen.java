@@ -133,6 +133,8 @@ public class PtGen {
 	private static int it, bc;
 	private static int ad;
 	private static int indAff;
+	private static int cptParam;
+	//private static int chainage;
 	
 	/** 
 	 * utilitaire de recherche de l'ident courant (ayant pour code UtilLex.numIdCourant) dans tabSymb
@@ -199,7 +201,8 @@ public class PtGen {
 		it = 0;
 		bc = 1;
 		ad=0;
-		indAff = -1;
+		indAff = -1; //indice d'une variable pour l'affectation
+		cptParam = 0;
 		
 		// pile des reprises pour compilation des branchements en avant
 		pileRep = new TPileRep(); 
@@ -231,13 +234,17 @@ public class PtGen {
 		case 1: int ind = presentIdent(1); if(ind != 0) { switch(tabSymb[ind].categorie) {
 															case CONSTANTE: po.produire(EMPILER);po.produire(tabSymb[ind].info);break;
 															case VARGLOBALE:po.produire(CONTENUG);po.produire(tabSymb[ind].info);break;
+															case PARAMFIXE , VARLOCALE : po.produire(CONTENUL); po.produire(tabSymb[ind].info);
+																			 po.produire(0);break;
+															case PARAMMOD : po.produire(CONTENUL); po.produire(tabSymb[ind].info);
+																			po.produire(1); break;
 														}}
 				tCour = tabSymb[ind].type;break;
 		case 2: verifEnt();break;
 		case 3: tCour = ENT; vCour = UtilLex.valEnt * -1; break;
 		case 4: po.produire(EMPILER);po.produire(vCour); break;
 		case 5: tCour = BOOL; po.produire(EG); break;
-		case 6: afftabSymb(); ;verifBool(); break;
+		case 6: verifBool(); break;
 		case 7: tCour = ENT; vCour = UtilLex.valEnt; break;
 		case 8: tCour = ENT; po.produire(ADD); break;
 		case 9: tCour = BOOL; po.produire(ET); break;
@@ -251,36 +258,171 @@ public class PtGen {
 		case 17: tCour = ENT; po.produire(SOUS);break;
 		case 18: tCour = ENT; po.produire(MUL);break;
 		case 19: tCour = ENT; po.produire(DIV);break;
-		case 20: po.produire(ECRENT);break;
+		case 20: if(tCour==ENT)po.produire(ECRENT); else po.produire(ECRBOOL);break;
 		case 21: if(presentIdent(1)==0) {UtilLex.messErr("variable " + UtilLex.chaineIdent(UtilLex.numIdCourant)+" non déclaré" );UtilLex.arret();} break;
 		case 22: tCour = BOOL; vCour = VRAI; break;
 		case 23: tCour = BOOL; vCour = FAUX; break;
 		case 24: int in = presentIdent(1);if(in != 0) {switch(tabSymb[in].categorie) {
-															case CONSTANTE: UtilLex.messErr("Constante "+ UtilLex.chaineIdent(tabSymb[in].code )+" ne peut être modifié"); UtilLex.arret(); break;
-															case VARGLOBALE: indAff = in; break;
-															}break;
-														}else {UtilLex.messErr("Variable n'existe pas"); UtilLex.arret();}break;
-		case  25: po.produire(AFFECTERG); po.produire(tabSymb[indAff].info);break;
+															case CONSTANTE , PARAMFIXE: UtilLex.messErr("Constante "+ UtilLex.chaineIdent(tabSymb[in].code )+" ne peut être modifié"); UtilLex.arret(); break;
+															case VARGLOBALE , VARLOCALE , PARAMMOD: indAff = in;break;
+															}
+														}else {
+															UtilLex.messErr("Identifiant inexistant !");
+															UtilLex.arret();
+														}break;
+		case  25:
+			if(indAff==-1) {
+				UtilLex.messErr("Identifiant non déclaré");
+				UtilLex.arret();
+			}
+			switch(tabSymb[indAff].categorie) {
+				case VARLOCALE, PARAMFIXE : po.produire(AFFECTERL); 
+					 po.produire(tabSymb[indAff].info); po.produire(0);
+					 break;
+				case PARAMMOD : po.produire(AFFECTERL); 
+				 	po.produire(tabSymb[indAff].info); po.produire(1);
+				 	break;
+				case VARGLOBALE : po.produire(AFFECTERG); po.produire(tabSymb[indAff].info);break;
+			}break;
 		case 26:tCour = BOOL;break;
 		case 27: tCour = ENT;break;
 		case 28: break;
-		case 29: if(presentIdent(1)!=0) {UtilLex.messErr("nom de variable déjà utilisé : " + UtilLex.numIdCourant); UtilLex.arret();} break;
+		case 29: if(presentIdent(bc)!=0) {UtilLex.messErr("nom de variable déjà utilisé : " + UtilLex.chaineIdent(UtilLex.numIdCourant)); UtilLex.arret();} break;
 		
 			// Var Ident
-		case 30: placeIdent(UtilLex.numIdCourant, VARGLOBALE, tCour, ad); ad++;  break;
-		case 31: placeIdent(UtilLex.numIdCourant, CONSTANTE, tCour, vCour); break;
-		case 32: po.produire(RESERVER); po.produire(ad);
-			//non fait
+		case 30: 
+			if (bc==1)
+				{placeIdent(UtilLex.numIdCourant, VARGLOBALE, tCour, ad);}
+			else
+				{placeIdent(UtilLex.numIdCourant, VARLOCALE,  tCour, cptParam+ad+2);}
+			ad++;
 			break;
+		case 31: placeIdent(UtilLex.numIdCourant, CONSTANTE, tCour, vCour); break;
+		case 32: po.produire(RESERVER); po.produire(ad); break;
+		case 33: po.modifier(pileRep.depiler(), po.getIpo()+1);break;
+		case 34:
+			//expression
+			verifBool();
+			po.produire(BSIFAUX); 
+			po.produire(-1);
+			pileRep.empiler(po.getIpo());
+			break;
+		case 35: 
+			po.produire(BINCOND);
+			po.produire(pileRep.depiler());
+			break;
+		case 36: 
+			po.produire(BINCOND);po.produire(-1);
+			po.modifier(pileRep.depiler(), po.getIpo()+1);
+			pileRep.empiler(po.getIpo());
+			break;
+		case 37: pileRep.empiler(po.getIpo()+1);break;
+		case 38: po.modifier(pileRep.depiler(), po.getIpo()+3); break;
+		case 39: 
+			//cond
+			pileRep.empiler(0); break; //marqueur de fin
+		case 40:
+			//bsifaux precedent
+			po.modifier(pileRep.depiler(), po.getIpo()+3);
+			//instruction 
+			po.produire(BINCOND);
+			po.produire(pileRep.depiler());
+			pileRep.empiler(po.getIpo());
+			break;
+		case 41:
+			//fcond
+			//cas ou aut n'existe pas
+			int chainage = pileRep.depiler();
+			if(po.getElt(chainage)==-1) {
+				po.modifier(chainage, po.getIpo()+1);
+				chainage = pileRep.depiler();
+			}
+				
+			while(chainage!=0) {
+				int nextAd = po.getElt(chainage);
+				po.modifier(chainage, po.getIpo()+1);
+				chainage = nextAd;
+			}
+			break;
+		case 42:
+			   in =presentIdent(bc);
+			  if (in==0){ 
+			   	  placeIdent(UtilLex.numIdCourant, PROC, NEUTRE, po.getIpo()+1);
+			   	  placeIdent(-1, PRIVEE, NEUTRE, 0);
+			   	  bc=it+1;
+			   	  ad = 0;
+			   }else
+				   {UtilLex.messErr("Nom de procedure déjà utilisée"); UtilLex.arret();}
+			break;
+		case 43:
+			tabSymb[bc-1].info=cptParam;
+			break;
+		case 44:
+			  po.produire(BINCOND);
+		   	  po.produire(-1);
+		   	  pileRep.empiler(po.getIpo());
+			break;
+		case 45:
+			in = presentIdent(bc);
+			if(in==0) { 
+                placeIdent(UtilLex.numIdCourant, PARAMFIXE , tCour , cptParam);cptParam++;} //page 177 td 10
+			break;
+		case 46: 
+			in = presentIdent(bc);
+			if(in==0) { 
+                placeIdent(UtilLex.numIdCourant, PARAMMOD , tCour , cptParam);cptParam++;} //page 177 td 10
+			break;
+		case 47:
+			in  = presentIdent(bc);
+			if(in == 0) {
+				UtilLex.messErr("variable " + UtilLex.chaineIdent(UtilLex.numIdCourant)+" non déclaré" );
+				UtilLex.arret();
+				}else {
+					if(tabSymb[in].type == BOOL)
+						po.produire(LIREBOOL);
+					else
+						po.produire(LIRENT);
+				    po.produire(AFFECTERG);
+				    po.produire(tabSymb[in].info);
+				}
+			break;
+		case 48:
+			po.modifier(pileRep.depiler(),po.getIpo() + 1);
+			break;
+		case 49:
+			in = presentIdent(bc);
+			if(in==0) {
+				UtilLex.messErr("Procédure " +  UtilLex.chaineIdent(UtilLex.numIdCourant) + " non déclaré");
+				UtilLex.arret();
+			}
+			break;
+		case 50:
+			// check param type incrementer a partir de bc en mm temps
+			break;
+		case 51:
+			// check param type incrementer a partir de bc en mm temps + empiler adresse des ident 
+			break;
+			//non fait
 		case 100: break;
-		
-		
-		
-		// TODO
-		case 254: po.produire(ARRET); break;
-		case 255 : //TestsProjet\DeclExp-T1
-			po.constObj();
-			afftabSymb(); // affichage de la table des symboles en fin de compilation
+		case 254: if(bc==1)
+					po.produire(ARRET);
+				  else {
+					po.produire(RETOUR);
+					po.produire(cptParam);
+					while(tabSymb[it].categorie == VARLOCALE || tabSymb[it].categorie == CONSTANTE)
+						it--;
+					for(int i = it; i >= bc; i--) {
+						tabSymb[i].code = -1;
+					}
+					bc = 1;
+					cptParam = 0;
+				  }
+					  break;
+		case 255 :
+				po.constObj();
+				po.constGen();
+				afftabSymb();
+			// affichage de la table des symboles en fin de compilation
 			break;
 
 		

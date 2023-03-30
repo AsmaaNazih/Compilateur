@@ -24,6 +24,13 @@ public class TPileRep {
 		}
 		// constructeur
 		public TPileRep() {ip=0;}
+		
+		public String toString() {
+			String rep = "";
+			for(int i = T.length - 1; i >= 0; i--)
+				rep+= i + ": " + T[i] + "\n";
+			return rep;
+		}
     } // TpileRep
    
 
