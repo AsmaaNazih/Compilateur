@@ -118,12 +118,11 @@ public class Edl {
 			int indiceRef = 1;
 			
 			for(int j = 0; j < tabDesc[i].getTailleCode(); j++) {
-				int ind = j+1;
 				if(ipo==2) {
 					po[ipo] = tabDec[0][nMod] + tabDesc[nMod].getTailleGlobaux();
 					Lecture.lireIntln(fObj);
 				}
-				else if(indiceVect < vecteurs.length && vecteurs[indiceVect].po==ind) {
+				else if(indiceVect < vecteurs.length && vecteurs[indiceVect].po==j+1) {
 					switch(vecteurs[indiceVect].translation) {
 						case TRANSDON : po[ipo] = tabDec[0][i] + Lecture.lireIntln(fObj);
 										indiceVect++; 
@@ -142,27 +141,15 @@ public class Edl {
 					po[ipo]=Lecture.lireIntln(fObj);
 				ipo++;
 			}
-			
-			
+			Lecture.fermer(fObj);
 		}
 		
-		for(int i = 1; i< ipo; i++) {
-			System.out.println(po[i]);
-		}
-		System.out.println("nbr ligne : " + ipo);
-
-		for(int i = 0; i< nMod+1; i++) {
-			for(int j =1; j<= tabDesc[i].getNbRef(); j++) {
-				System.out.print(adFinale[i][j] + " ");
-			}
-			System.out.println();
-		}
-		
-		
+		for (int i = 1; i <= ipo; i++)
+			Ecriture.ecrireStringln(f2, "" + po[i]);
 		Ecriture.fermer(f2);
 
 		// creation du fichier en mnemonique correspondant
-		Mnemo.creerFichier(ipo, po, nomProg + ".ima");
+		Mnemo.creerFichier(--ipo, po, nomProg + ".ima");
 	}
 	
 
@@ -218,15 +205,36 @@ public class Edl {
 				}
 			}
 		}
-
+		
+		verifRef();
 		if (nbErr > 0) {
 			System.out.println("programme executable non produit");
 			System.exit(1);
 		}
-
+		
 		// Phase 2 de l'edition de liens
 		// -----------------------------
 		constMap();				//TODO : ... A COMPLETER ...
 		System.out.println("Edition de liens terminee");
+	}
+	
+	static void verifRef() {
+		for(int i = 0; i < nMod+1; i++) {
+			for(int j = 1; j<= tabDesc[i].getNbRef(); j++) {
+				boolean insert = false;
+				int ind = 1;
+				while(dicoDef[ind]!=null && !insert) {
+					if(dicoDef[ind].nomProc.equals(tabDesc[i].getRefNomProc(j))) {
+						insert = true;
+						if(dicoDef[ind].nbParam != tabDesc[i].getRefNbParam(j)) 
+							erreur(NONFATALE, "Ref : " + tabDesc[i].getRefNomProc(j) + " mauvais nombre de paramètre(s)");
+						
+					}
+					ind++;
+				}
+				if(!insert)
+					erreur(NONFATALE, "Ref : " + tabDesc[i].getRefNomProc(j) + " non definie");
+			}
+		}
 	}
 }
