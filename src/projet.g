@@ -109,7 +109,7 @@ instruction
   | boucle
   | lecture
   | ecriture
-  | affouappel
+  | affouappel 
   |
   ;
   

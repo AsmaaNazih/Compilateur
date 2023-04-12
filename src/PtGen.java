@@ -557,7 +557,7 @@ public class PtGen {
 			break;
 		case 60: 
 			desc.setUnite("module");
-			break;
+			break; 
 		case 61:
 			indice = desc.presentRef(UtilLex.chaineIdent(UtilLex.numIdCourant));
 			nbrPara = desc.getRefNbParam(indice);
