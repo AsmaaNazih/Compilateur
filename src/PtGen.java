@@ -286,16 +286,14 @@ public class PtGen {
 													break;
 						case VARGLOBALE , VARLOCALE , PARAMMOD: indAff = in;
 													break;
+						default : UtilLex.messErr("Catégorie identifiant inexistante");
+								  UtilLex.arret();
 					  }
 				  }else {
 					  UtilLex.messErr("Identifiant inexistant !");
 					  UtilLex.arret();
 				  }break;
 		case  25:
-			if(indAff==-1) {
-				UtilLex.messErr("Identifiant non déclaré");
-				UtilLex.arret();
-			}
 			switch(tabSymb[indAff].categorie) {
 				case VARLOCALE : po.produire(AFFECTERL); 
 					 po.produire(tabSymb[indAff].info); po.produire(0);
@@ -308,6 +306,11 @@ public class PtGen {
 					break;
 			}
 			break;
+		case 62: if(tCour!=tabSymb[indAff].type) {
+					UtilLex.messErr("miss match typage ident expression");
+					UtilLex.arret();
+				 }
+				 break;
 		case 26:tCour = BOOL;break;
 		case 27: tCour = ENT;break;
 		case 28: break;
@@ -365,8 +368,8 @@ public class PtGen {
 			break;
 		case 41:
 			//fcond
-			//cas ou aut n'existe pas
 			int chainage = pileRep.depiler();
+			//cas ou aut n'existe pas
 			if(po.getElt(chainage)==-1) {
 				po.modifier(chainage, po.getIpo()+1);
 				chainage = pileRep.depiler();
