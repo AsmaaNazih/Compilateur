@@ -452,23 +452,23 @@ public class PtGen {
 				UtilLex.arret();
 			}
 			
-			if(tabSymb[refAdresseProc + 1 + nbrParam].categorie==PARAMMOD) {
-				switch(tabSymb[presentIdent(1)].categorie) {
-					case VARGLOBALE : po.produire(EMPILERADG);
-									  po.produire(tabSymb[presentIdent(1)].info);
-									  break;
-					case VARLOCALE : po.produire(EMPILERADL);
-									 po.produire(tabSymb[presentIdent(1)].info);
-									 po.produire(0);
-									 break;
-					case PARAMMOD : po.produire(EMPILERADL);
-					 				 po.produire(tabSymb[presentIdent(1)].info);
-					 				 po.produire(1);
-					 				 break;
-					default : UtilLex.messErr("type passé en paramètre incorrect");
-							  UtilLex.arret();
-				}
+			switch(tabSymb[presentIdent(1)].categorie) {
+				case VARGLOBALE : po.produire(EMPILERADG);
+								  po.produire(tabSymb[presentIdent(1)].info);
+								  modifVecteurTrans(TRANSDON);
+								  break;
+				case VARLOCALE : po.produire(EMPILERADL);
+								 po.produire(tabSymb[presentIdent(1)].info);
+								 po.produire(0);
+								 break;
+				case PARAMMOD : po.produire(EMPILERADL);
+				 				 po.produire(tabSymb[presentIdent(1)].info);
+				 				 po.produire(1);
+				 				 break;
+				default : UtilLex.messErr("type passé en paramètre incorrect");
+						  UtilLex.arret();
 			}
+			
 			break;
 		case 51:
 			int i = 2;

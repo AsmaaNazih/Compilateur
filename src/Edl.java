@@ -104,7 +104,7 @@ public class Edl {
 					+ ".map impossible");
 		// pour construire le code concatene de toutes les unités
 		int[] po = new int[(nMod + 1) * MAXOBJ + 1];
-		//application des vecteurs de transalations
+		
 		for(int i=0; i< nMod+1; i++) {
 			InputStream fObj = Lecture.ouvrir(tabName[i]+".obj");
 			vecteurs = new VecteurT[tabDesc[i].getNbTransExt()];
@@ -123,6 +123,7 @@ public class Edl {
 					Lecture.lireIntln(fObj);
 				}
 				else if(indiceVect < vecteurs.length && vecteurs[indiceVect].po==j+1) {
+					//application des vecteurs de transalations
 					switch(vecteurs[indiceVect].translation) {
 						case TRANSDON : po[ipo] = tabDec[0][i] + Lecture.lireIntln(fObj);
 										indiceVect++; 

@@ -1,16 +1,10 @@
 FICHIER test.desc :
 
 unite          programme
-tailleCode     62
-tailleGlobaux  1
+tailleCode     132
+tailleGlobaux  2
 nbDef          0
-nbRef          6
-nbTransExt     6
+nbRef          0
+nbTransExt     0
 tabDef          
 tabRef          
-    init1  0
-    init2  0
-    ajout1  1
-    ajout2  1
-    ecr1  0
-    ecr2  0

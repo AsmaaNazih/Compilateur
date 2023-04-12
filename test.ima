@@ -1,0 +1,148 @@
+FICHIER test.ima : 
+
+   1  reserver        8
+   3  bincond       124
+   5  reserver        1
+   7  empiler         0
+   9  affecterl       5   0
+  12  contenul        0   0
+  15  empiler         0
+  17  eg        
+  18  bsifaux        36
+  20  empiler         1
+  22  affecterl       5   0
+  25  empiler         0
+  27  affecterl       1   1
+  30  empiler         1
+  32  affecterg       1
+  34  bincond        58
+  36  contenul        0   0
+  39  empiler        -1
+  41  eg        
+  42  bsifaux        58
+  44  empiler         1
+  46  affecterl       5   0
+  49  empiler         1
+  51  affecterl       1   1
+  54  empiler         0
+  56  affecterg       1
+  58  contenul        5   0
+  61  affecterl       2   1
+  64  retour          3
+  66  reserver        2
+  68  lirent    
+  69  affecterl       3   0
+  72  contenul        3   0
+  75  empileradl      0   1
+  78  empileradl      4   0
+  81  appel           5   3
+  84  contenul        4   0
+  87  non       
+  88  bsifaux       122
+  90  empileradl      0   1
+  93  appel          66   1
+  96  contenug        1
+  98  bsifaux       112
+ 100  contenul        3   0
+ 103  contenul        0   1
+ 106  add       
+ 107  affecterl       0   1
+ 110  bincond       122
+ 112  contenul        3   0
+ 115  contenul        0   1
+ 118  mul       
+ 119  affecterl       0   1
+ 122  retour          1
+ 124  empileradg      0
+ 126  appel          66   1
+ 129  contenug        0
+ 131  ecrent    
+ 132  arret     
+ 133  empiler         0
+ 135  affecterg       2
+ 137  retour          0
+ 139  contenug        2
+ 141  empiler         0
+ 143  eg        
+ 144  bsifaux       158
+ 146  contenul        0   0
+ 149  affecterg       3
+ 151  contenul        0   0
+ 154  affecterg       4
+ 156  bincond       186
+ 158  contenul        0   0
+ 161  contenug        3
+ 163  inf       
+ 164  bsifaux       173
+ 166  contenul        0   0
+ 169  affecterg       3
+ 171  bincond       186
+ 173  contenul        0   0
+ 176  contenug        4
+ 178  sup       
+ 179  bsifaux       186
+ 181  contenul        0   0
+ 184  affecterg       4
+ 186  contenug        2
+ 188  empiler         1
+ 190  add       
+ 191  affecterg       2
+ 193  retour          1
+ 195  contenug        2
+ 197  empiler         0
+ 199  diff      
+ 200  bsifaux       213
+ 202  contenug        2
+ 204  ecrent    
+ 205  contenug        3
+ 207  ecrent    
+ 208  contenug        4
+ 210  ecrent    
+ 211  bincond       216
+ 213  empiler         0
+ 215  ecrent    
+ 216  retour          0
+ 218  empiler         0
+ 220  affecterg       5
+ 222  retour          0
+ 224  contenug        5
+ 226  empiler         0
+ 228  eg        
+ 229  bsifaux       243
+ 231  contenul        0   0
+ 234  affecterg       6
+ 236  contenul        0   0
+ 239  affecterg       7
+ 241  bincond       271
+ 243  contenul        0   0
+ 246  contenug        6
+ 248  inf       
+ 249  bsifaux       258
+ 251  contenul        0   0
+ 254  affecterg       6
+ 256  bincond       271
+ 258  contenul        0   0
+ 261  contenug        7
+ 263  sup       
+ 264  bsifaux       271
+ 266  contenul        0   0
+ 269  affecterg       7
+ 271  contenug        5
+ 273  empiler         1
+ 275  add       
+ 276  affecterg       5
+ 278  retour          1
+ 280  contenug        5
+ 282  empiler         0
+ 284  diff      
+ 285  bsifaux       298
+ 287  contenug        5
+ 289  ecrent    
+ 290  contenug        6
+ 292  ecrent    
+ 293  contenug        7
+ 295  ecrent    
+ 296  bincond       301
+ 298  empiler         0
+ 300  ecrent    
+ 301  retour          0

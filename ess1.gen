@@ -8,7 +8,7 @@ FICHIER ess1.gen :
   12  contenug        0
   14  empiler        -1
   16  diff      
-  17  bsifaux        56
+  17  bsifaux        58
   19  contenug        0
   21  empiler         0
   23  supeg     
@@ -16,19 +16,20 @@ FICHIER ess1.gen :
   26  empiler        20
   28  infeg     
   29  et        
-  30  bsifaux        51
+  30  bsifaux        53
   32  contenug        0
   34  empiler        10
   36  inf       
-  37  bsifaux        46
+  37  bsifaux        48
   39  contenug        0
-  41  appel           3   1
-  44  bincond        51
-  46  contenug        0
-  48  appel           4   1
-  51  lirent    
-  52  affecterg       0
-  54  bincond        12
-  56  appel           5   0
-  59  appel           6   0
-  62  arret     
+  41  contenug        0
+  43  appel           3   2
+  46  bincond        53
+  48  contenug        0
+  50  appel           4   1
+  53  lirent    
+  54  affecterg       0
+  56  bincond        12
+  58  appel           5   0
+  61  appel           6   0
+  64  arret     
