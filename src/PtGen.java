@@ -137,6 +137,7 @@ public class PtGen {
 	private static int refAdresseProc;
 	private static int nbrParam;
 	private static boolean hasProc;
+	private static int tailleGlobaux;
 	//private static int chainage;
 	
 	/** 
@@ -209,6 +210,7 @@ public class PtGen {
 		refAdresseProc = 0;
 		nbrParam = 0;
 		hasProc = false;
+		tailleGlobaux = 0;
 		// pile des reprises pour compilation des branchements en avant
 		pileRep = new TPileRep(); 
 		// programme objet = code Mapile de l'unite en cours de compilation
@@ -320,6 +322,7 @@ public class PtGen {
 		case 30: 
 			if (bc==1){
 				placeIdent(UtilLex.numIdCourant, VARGLOBALE, tCour, ad);
+				tailleGlobaux++;
 				}	
 			else
 				{placeIdent(UtilLex.numIdCourant, VARLOCALE,  tCour, cptParam+ad+2);}
@@ -330,7 +333,7 @@ public class PtGen {
 					 po.produire(RESERVER); 
 					 po.produire(ad);
 				 }
-					 desc.setTailleGlobaux(ad); 
+					 desc.setTailleGlobaux(tailleGlobaux); 
 				 break;
 		case 33: po.modifier(pileRep.depiler(), po.getIpo()+1);break;
 		case 34:
@@ -446,6 +449,10 @@ public class PtGen {
 				UtilLex.messErr("Procédure " +  UtilLex.chaineIdent(UtilLex.numIdCourant) + " non déclaré");
 				UtilLex.arret();
 			}
+			if(tabSymb[refAdresseProc].categorie != PROC) {
+				UtilLex.messErr( UtilLex.chaineIdent(UtilLex.numIdCourant) + " non déclaré en tant que procédure");
+				UtilLex.arret();
+			}
 			break;
 		case 50:
 			// check param type incrementer a partir de bc en mm temps
@@ -482,7 +489,7 @@ public class PtGen {
 				}
 				i++;
 			}
-			if(tabSymb[refAdresseProc + i].categorie==PARAMFIXE) {
+			if(nbrParam !=0 && tabSymb[refAdresseProc + i].categorie==PARAMFIXE) {
 				UtilLex.messErr("Paramètre fixe manquant !");
 				UtilLex.arret();
 			}
@@ -554,6 +561,7 @@ public class PtGen {
 			break;
 		case 59:
 			bc=1;
+			cptParam = 0;
 			break;
 		case 60: 
 			desc.setUnite("module");

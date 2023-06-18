@@ -112,10 +112,10 @@ public class Edl {
 				String tab[] = new String[2];
 				tab = Lecture.lireString(fObj).split("   ");
 				vecteurs[j] = new VecteurT(Integer.parseInt(tab[0]),Integer.parseInt(tab[1]));
+				System.out.println("indice : " + Integer.parseInt(tab[0]) + " codeVect: " + Integer.parseInt(tab[1]));
 			}
 
 			int indiceVect = 0;
-			int indiceRef = 1;
 			
 			for(int j = 0; j < tabDesc[i].getTailleCode(); j++) {
 				if(ipo==2) {
@@ -131,9 +131,9 @@ public class Edl {
 						case TRANSCODE :po[ipo] = tabDec[1][i] + Lecture.lireIntln(fObj);
 										indiceVect++;
 										break;
-						case REFEXT : po[ipo] = adFinale[i][indiceRef++];
+						case REFEXT : 
+										po[ipo] = adFinale[i][Lecture.lireIntln(fObj)];
 										indiceVect++;
-										Lecture.lireIntln(fObj);
 										break;
 						default : System.out.println("Error typage vecteur translation");
 					}
@@ -213,6 +213,13 @@ public class Edl {
 			System.exit(1);
 		}
 		
+		for(int i = 0; i < adFinale.length; i++ ) {
+			for(int j = 0; j< adFinale[i].length; j++) {
+				System.out.println(adFinale[i][j]);
+			}
+			System.out.println();
+		}
+		
 		// Phase 2 de l'edition de liens
 		// -----------------------------
 		constMap();				//TODO : ... A COMPLETER ...
@@ -227,9 +234,9 @@ public class Edl {
 				while(dicoDef[ind]!=null && !insert) {
 					if(dicoDef[ind].nomProc.equals(tabDesc[i].getRefNomProc(j))) {
 						insert = true;
-						if(dicoDef[ind].nbParam != tabDesc[i].getRefNbParam(j)) 
+						if(dicoDef[ind].nbParam != tabDesc[i].getRefNbParam(j)) { 
 							erreur(NONFATALE, "Ref : " + tabDesc[i].getRefNomProc(j) + " mauvais nombre de paramètre(s)");
-						
+						}
 					}
 					ind++;
 				}
